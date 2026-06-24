@@ -8,11 +8,15 @@ Edit the `updates` list in `site-data.js`.
 
 ```js
 {
-  date: "2026-07",
+  date: "2025-11",
   title: "Update title",
   body: "A short update paragraph.",
 }
 ```
+
+Past dates are fine. The site sorts updates from newest to oldest automatically.
+Use `YYYY-MM` for a month-level update or `YYYY-MM-DD` if you want to keep the
+exact day in the source data. The page displays month and year by default.
 
 ## Photography
 
@@ -35,6 +39,9 @@ Edit the `updates` list in `site-data.js`.
 }
 ```
 
+You can rename sections freely. For example, `Snow`, `Campus`, `Travel`,
+`Archive`, or any custom collection name.
+
 ## Publishing
 
 For a static personal site, the clean workflow is:
@@ -42,6 +49,16 @@ For a static personal site, the clean workflow is:
 1. Edit files locally.
 2. Preview the site in a browser.
 3. Commit and push to GitHub.
-4. Let GitHub Pages, Netlify, or Vercel redeploy the site.
+4. Let GitHub Pages redeploy the site.
+
+Commands:
+
+```sh
+cd /Users/necheng/Documents/Self/personal-site
+git status
+git add .
+git commit -m "Update site content"
+git push
+```
 
 The old browser-only local editor is not suitable for a public production site because it stores drafts only in one browser and is not a secure owner-only CMS.

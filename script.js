@@ -74,11 +74,19 @@ const formatMonth = (value) => {
   return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 };
 
+const getUpdateSortValue = (update) => {
+  const value = String(update.date || "");
+  const [year = "0", month = "1", day = "1"] = value.split("-");
+  return new Date(Number(year), Number(month) - 1, Number(day)).getTime() || 0;
+};
+
 const renderUpdates = () => {
   const list = document.querySelector("#updates-list");
   if (!list) return;
 
-  const updates = Array.isArray(window.siteData?.updates) ? window.siteData.updates : [];
+  const updates = Array.isArray(window.siteData?.updates)
+    ? [...window.siteData.updates].sort((a, b) => getUpdateSortValue(b) - getUpdateSortValue(a))
+    : [];
   list.innerHTML = "";
 
   updates.forEach((update) => {
