@@ -67,11 +67,14 @@ const updateScrollRule = () => {
 window.addEventListener("scroll", updateScrollRule, { passive: true });
 updateScrollRule();
 
-const formatMonth = (value) => {
+const formatUpdateDate = (value) => {
   if (!value) return "Undated";
-  const [year, month] = value.split("-");
-  const date = new Date(Number(year), Number(month) - 1);
-  return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const [year, month, day] = String(value).split("-");
+  const date = new Date(Number(year), Number(month) - 1, Number(day || 1));
+  const options = day
+    ? { month: "long", day: "numeric", year: "numeric" }
+    : { month: "long", year: "numeric" };
+  return date.toLocaleDateString("en-US", options);
 };
 
 const getUpdateSortValue = (update) => {
@@ -94,7 +97,7 @@ const renderUpdates = () => {
 
     const time = document.createElement("time");
     time.dateTime = update.date || "";
-    time.textContent = update.label || formatMonth(update.date);
+    time.textContent = update.label || formatUpdateDate(update.date);
 
     const content = document.createElement("div");
 

@@ -1,22 +1,32 @@
 window.siteData = {
   updates: [
     {
-      date: "2026-06",
-      title: "Personal site first draft",
+      date: "2026-05-15",
+      title: "University of Rochester graduation",
       body:
-        "A visual system shaped by fine lines, serif typography, gold details, and restrained movement, built around Baichuan Duan / Necheng.",
-    },
-    {
-      date: "2026-05",
-      title: "Current interests",
-      body:
-        "Preparing for Yale Biostatistics and future research in machine learning, LLM applications, and domain-rich data.",
+        "Graduated cum laude from the University of Rochester with a double major in Business Information Systems and Data Science and a minor in Computer Science.",
     },
     {
       date: "2026-04",
-      title: "Project archive",
+      title: "Data Science capstone",
       body:
-        "A future home for notes on NLP, RAG, survey analysis, healthcare data, and software projects.",
+        "Completed the Paychex product recommendation agent with Shixin Lin, Zhengyang Zhu, and Lexiang Yang.",
+    },
+    {
+      date: "2024-10-01",
+      title: "Green finance working paper",
+      body:
+        "Completed the working paper \"Research on the Impact of Green Finance Reforms on Pilot-Listed Companies in China\" with Haiyang Zeng, Yiqi Jin, Che Jiang, Huijun Zeng, and Yuxiang Cheng.",
+    },
+    {
+      date: "2022-08-22",
+      title: "University of Rochester",
+      body: "Started undergraduate studies at the University of Rochester.",
+    },
+    {
+      date: "2022-07",
+      title: "High school graduation",
+      body: "Graduated from Beijing Haidian International School.",
     },
   ],
   photographySections: [

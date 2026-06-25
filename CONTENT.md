@@ -15,8 +15,8 @@ Edit the `updates` list in `site-data.js`.
 ```
 
 Past dates are fine. The site sorts updates from newest to oldest automatically.
-Use `YYYY-MM` for a month-level update or `YYYY-MM-DD` if you want to keep the
-exact day in the source data. The page displays month and year by default.
+Use `YYYY-MM` for a month-level update or `YYYY-MM-DD` if you want to display an
+exact day.
 
 ## Photography
 
