@@ -193,7 +193,13 @@ const getTravelRecords = () =>
 
 const getFeatureCode = (feature) =>
   normalizeTravelCode(
-    feature?.properties?.ISO_A3 || feature?.properties?.ADM0_A3 || feature?.properties?.SOV_A3
+    [
+      feature?.properties?.ISO_A3,
+      feature?.properties?.ADM0_A3,
+      feature?.properties?.ADM0_ISO,
+      feature?.properties?.BRK_A3,
+      feature?.properties?.SOV_A3,
+    ].find((value) => value && String(value) !== "-99")
   );
 
 const getFeatureName = (feature) =>
@@ -365,7 +371,7 @@ const renderTravelMap = async () => {
 
       const count = document.createElement("span");
       const cityCount = getCityEntries(record).length;
-      count.textContent = `${cityCount} ${cityCount === 1 ? "city" : "cities"}`;
+      count.textContent = `${cityCount} ${cityCount === 1 ? "place" : "places"}`;
 
       button.append(name, count);
       if (feature) {
@@ -387,7 +393,7 @@ const renderTravelMap = async () => {
     if (title) title.textContent = "World";
     if (copy) {
       copy.textContent = records.length
-        ? `${records.length} ${records.length === 1 ? "country" : "countries"} saved.`
+        ? `${records.length} ${records.length === 1 ? "country / region" : "countries / regions"} saved.`
         : "No countries saved yet.";
     }
     renderCities([]);
@@ -427,8 +433,8 @@ const renderTravelMap = async () => {
     if (title) title.textContent = countryName;
     if (copy) {
       copy.textContent = cities.length
-        ? `${cities.length} ${cities.length === 1 ? "city" : "cities"} saved.`
-        : "No saved cities yet.";
+        ? `${cities.length} ${cities.length === 1 ? "place" : "places"} saved.`
+        : "No saved places yet.";
     }
   }
 

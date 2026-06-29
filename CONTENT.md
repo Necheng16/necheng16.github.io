@@ -61,8 +61,8 @@ Edit `travel.countries` in `site-data.js`.
 ```
 
 Use ISO3 country codes when possible: `FRA` for France, `CHN` for China,
-`USA` for the United States, `JPN` for Japan. Cities can be plain names. If
-you add `coordinates: [longitude, latitude]`, the city also appears as a pin
+`USA` for the United States, `JPN` for Japan. Places can be plain names. If
+you add `coordinates: [longitude, latitude]`, the place also appears as a pin
 when the country is selected.
 
 ## Publishing
