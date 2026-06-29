@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hobby | Baichuan Duan</title>
-    <meta name="description" content="Hobbies and references." />
+    <title>Travel | Baichuan Duan</title>
+    <meta name="description" content="Travel map and city archive." />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body data-page="interests">
+  <body data-page="travel">
     <div class="scroll-rule" aria-hidden="true"></div>
 
     <header class="site-header">
@@ -32,45 +32,36 @@
 
     <main class="page-frame subpage">
       <section class="page-title reveal">
-        <p class="kicker">02 / Hobby</p>
-        <h1>Things I like.</h1>
+        <p class="kicker">03 / Travel</p>
+        <h1>World map.</h1>
       </section>
 
-      <section class="interest-list reveal">
-        <article>
-          <span>01</span>
-          <h2>Games</h2>
-          <p>AAA titles, CS2, Valorant, League of Legends, and a 500+ game library.</p>
-        </article>
-        <article>
-          <span>02</span>
-          <h2>Skiing</h2>
-          <p>A longtime Ikon and Epic Pass holder, with many mountains visited.</p>
-        </article>
-        <article>
-          <span>03</span>
-          <h2>Travel</h2>
-          <p>Enjoy travel, with many countries and cities visited.</p>
-        </article>
-        <article>
-          <span>04</span>
-          <h2>Football</h2>
-          <p>Manchester United. GGMU.</p>
-        </article>
-        <article>
-          <span>05</span>
-          <h2>Formula 1</h2>
-          <p>Ferrari, precision, speed, strategy, and the aesthetics of engineering.</p>
-        </article>
+      <section class="travel-board reveal" aria-label="Travel map">
+        <div class="travel-map-shell">
+          <svg id="travel-map" class="travel-map" role="img" aria-label="Interactive world map"></svg>
+        </div>
+
+        <aside class="travel-detail" id="travel-detail" aria-live="polite">
+          <div class="travel-detail-head">
+            <p class="kicker">Travel</p>
+            <button class="travel-reset" id="travel-reset" type="button">World</button>
+          </div>
+          <h2 id="travel-country-title">World</h2>
+          <p id="travel-country-copy">Saved countries and cities.</p>
+          <ul class="travel-city-list" id="travel-city-list"></ul>
+          <div class="travel-country-index" id="travel-country-index"></div>
+        </aside>
       </section>
     </main>
 
     <footer class="site-footer">
       <span>Baichuan (Benjamin) Duan</span>
-      <span>Hobby</span>
+      <span>Travel</span>
       <a href="contact.html">Contact</a>
     </footer>
 
+    <script src="site-data.js"></script>
+    <script src="assets/vendor/d3.v7.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -804,6 +804,191 @@ p [data-egg] {
   object-fit: cover;
 }
 
+.travel-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.55fr);
+  gap: clamp(1.8rem, 4vw, 3.4rem);
+  align-items: stretch;
+  padding: 4rem 0 0;
+}
+
+.travel-map-shell {
+  position: relative;
+  min-height: 34rem;
+  border: 1px solid var(--line-strong);
+  background:
+    linear-gradient(90deg, rgba(181, 150, 92, 0.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(181, 150, 92, 0.035) 1px, transparent 1px),
+    rgba(251, 250, 247, 0.78);
+  background-size: 3.25rem 3.25rem;
+  overflow: hidden;
+}
+
+.travel-map-shell::before,
+.travel-map-shell::after {
+  content: "";
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid rgba(185, 145, 85, 0.24);
+  pointer-events: none;
+}
+
+.travel-map-shell::after {
+  inset: 0;
+  border: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(251, 250, 247, 0.42), transparent),
+    radial-gradient(circle at 50% 42%, rgba(185, 145, 85, 0.09), transparent 54%);
+}
+
+.travel-map {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: min(70vh, 43rem);
+  min-height: 34rem;
+}
+
+.travel-sphere {
+  fill: rgba(243, 239, 230, 0.45);
+  stroke: var(--line);
+  stroke-width: 1;
+  cursor: zoom-out;
+}
+
+.travel-country {
+  fill: rgba(213, 202, 188, 0.36);
+  stroke: rgba(143, 106, 53, 0.35);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition:
+    fill 180ms ease,
+    stroke 180ms ease,
+    opacity 180ms ease;
+}
+
+.travel-country:hover,
+.travel-country:focus {
+  fill: rgba(185, 145, 85, 0.44);
+  outline: none;
+}
+
+.travel-country.is-visited {
+  fill: rgba(185, 145, 85, 0.72);
+  stroke: rgba(143, 106, 53, 0.78);
+}
+
+.travel-country.is-selected {
+  fill: var(--gold-deep);
+  stroke: var(--ink);
+  stroke-width: 1.05;
+}
+
+.travel-city-pin {
+  fill: var(--paper);
+  stroke: var(--green);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0.2rem 0.18rem rgba(38, 37, 35, 0.2));
+}
+
+.travel-detail {
+  display: grid;
+  align-content: start;
+  gap: 1.2rem;
+  min-height: 34rem;
+  padding: 1.4rem 0 0;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+}
+
+.travel-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.travel-detail h2 {
+  font-size: clamp(2.7rem, 5vw, 4.2rem);
+  line-height: 0.95;
+}
+
+.travel-reset {
+  min-height: 2.45rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line-strong);
+  color: var(--gold-deep);
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.travel-city-list,
+.travel-country-index {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.travel-city-list {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.travel-city-list li {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  color: #5c574f;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+.travel-country-index {
+  margin-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.travel-country-index button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.1rem;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: #5c574f;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.travel-country-index button span:first-child {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+}
+
+.travel-country-index button span:last-child {
+  color: var(--gold);
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.travel-country-index button:disabled {
+  color: var(--muted);
+  cursor: default;
+  opacity: 0.55;
+}
+
 .contact-hero {
   display: grid;
   justify-items: center;
@@ -1050,6 +1235,14 @@ p [data-egg] {
     font-size: 4.7rem;
   }
 
+  .site-nav {
+    gap: 0.82rem;
+  }
+
+  .site-nav a {
+    font-size: 0.72rem;
+  }
+
   .rooms-grid,
   .work-grid,
   .triple-grid {
@@ -1059,7 +1252,8 @@ p [data-egg] {
   .about-ledger,
   .calling-card,
   .editor-layout,
-  .note-console {
+  .note-console,
+  .travel-board {
     grid-template-columns: 1fr;
   }
 
@@ -1175,6 +1369,11 @@ p [data-egg] {
 
   .gallery-slot {
     min-height: 20rem;
+  }
+
+  .travel-map,
+  .travel-map-shell {
+    min-height: 26rem;
   }
 
   .contact-links {

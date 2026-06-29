@@ -42,6 +42,29 @@ exact day.
 You can rename sections freely. For example, `Snow`, `Campus`, `Travel`,
 `Archive`, or any custom collection name.
 
+## Travel
+
+Edit `travel.countries` in `site-data.js`.
+
+```js
+{
+  iso3: "FRA",
+  name: "France",
+  cities: [
+    "Paris",
+    {
+      name: "Nice",
+      coordinates: [7.262, 43.71],
+    },
+  ],
+}
+```
+
+Use ISO3 country codes when possible: `FRA` for France, `CHN` for China,
+`USA` for the United States, `JPN` for Japan. Cities can be plain names. If
+you add `coordinates: [longitude, latitude]`, the city also appears as a pin
+when the country is selected.
+
 ## Publishing
 
 For a static personal site, the clean workflow is:

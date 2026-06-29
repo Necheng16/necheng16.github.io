@@ -178,8 +178,291 @@ const renderPhotographyGallery = () => {
   });
 };
 
+const normalizeTravelName = (value) =>
+  String(value || "")
+    .trim()
+    .toLowerCase();
+
+const normalizeTravelCode = (value) =>
+  String(value || "")
+    .trim()
+    .toUpperCase();
+
+const getTravelRecords = () =>
+  Array.isArray(window.siteData?.travel?.countries) ? window.siteData.travel.countries : [];
+
+const getFeatureCode = (feature) =>
+  normalizeTravelCode(
+    feature?.properties?.ISO_A3 || feature?.properties?.ADM0_A3 || feature?.properties?.SOV_A3
+  );
+
+const getFeatureName = (feature) =>
+  feature?.properties?.ADMIN || feature?.properties?.NAME_LONG || feature?.properties?.NAME || "Country";
+
+const getCityEntries = (record) => {
+  if (!Array.isArray(record?.cities)) return [];
+
+  return record.cities
+    .map((city) => {
+      if (typeof city === "string") return { name: city };
+
+      const coordinates = Array.isArray(city?.coordinates)
+        ? city.coordinates
+        : Array.isArray(city?.coords)
+          ? city.coords
+          : null;
+      const lng = Number(city?.lng);
+      const lat = Number(city?.lat);
+      const numericCoordinates = Number.isFinite(lng) && Number.isFinite(lat) ? [lng, lat] : null;
+
+      return {
+        name: city?.name || city?.label || "",
+        coordinates: coordinates || numericCoordinates,
+      };
+    })
+    .filter((city) => city.name);
+};
+
+const renderTravelMap = async () => {
+  const svgNode = document.querySelector("#travel-map");
+  if (!svgNode) return;
+
+  const title = document.querySelector("#travel-country-title");
+  const copy = document.querySelector("#travel-country-copy");
+  const cityList = document.querySelector("#travel-city-list");
+  const countryIndex = document.querySelector("#travel-country-index");
+  const resetButton = document.querySelector("#travel-reset");
+  const d3Map = window.d3;
+
+  if (!d3Map) {
+    if (copy) copy.textContent = "Map library unavailable.";
+    return;
+  }
+
+  const records = getTravelRecords();
+  const recordsByCode = new Map();
+  const recordsByName = new Map();
+
+  records.forEach((record) => {
+    const code = normalizeTravelCode(record.iso3 || record.code);
+    const name = normalizeTravelName(record.name || record.country);
+    if (code) recordsByCode.set(code, record);
+    if (name) recordsByName.set(name, record);
+  });
+
+  const getRecordForFeature = (feature) => {
+    const code = getFeatureCode(feature);
+    const name = normalizeTravelName(getFeatureName(feature));
+    return recordsByCode.get(code) || recordsByName.get(name);
+  };
+
+  const width = 1200;
+  const height = 680;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const duration = reducedMotion ? 0 : 850;
+
+  const svg = d3Map
+    .select(svgNode)
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
+  svg.selectAll("*").remove();
+
+  if (copy) copy.textContent = "Loading map.";
+
+  let world;
+  try {
+    const response = await fetch("assets/maps/world-countries.geojson");
+    if (!response.ok) throw new Error("Map data unavailable");
+    world = await response.json();
+  } catch (error) {
+    if (title) title.textContent = "Map unavailable";
+    if (copy) copy.textContent = "Preview this page from a local server or the published site.";
+    return;
+  }
+
+  const projection = d3Map.geoNaturalEarth1();
+  const path = d3Map.geoPath(projection);
+  const sphere = { type: "Sphere" };
+  projection.fitExtent(
+    [
+      [24, 24],
+      [width - 24, height - 24],
+    ],
+    sphere
+  );
+
+  const mapGroup = svg.append("g").attr("class", "travel-map-group");
+  const spherePath = mapGroup
+    .append("path")
+    .datum(sphere)
+    .attr("class", "travel-sphere")
+    .attr("d", path);
+  const countryLayer = mapGroup.append("g").attr("class", "travel-country-layer");
+  const pinLayer = mapGroup.append("g").attr("class", "travel-pin-layer");
+
+  const features = Array.isArray(world.features)
+    ? world.features.filter((feature) => getFeatureName(feature) !== "Antarctica")
+    : [];
+  const featureByRecordKey = new Map();
+
+  features.forEach((feature) => {
+    const record = getRecordForFeature(feature);
+    if (!record) return;
+    const codeKey = normalizeTravelCode(record.iso3 || record.code);
+    const nameKey = normalizeTravelName(record.name || record.country);
+    if (codeKey) featureByRecordKey.set(codeKey, feature);
+    if (nameKey) featureByRecordKey.set(nameKey, feature);
+  });
+
+  const renderCities = (cities) => {
+    if (!cityList) return;
+    cityList.innerHTML = "";
+    cities.forEach((city) => {
+      const item = document.createElement("li");
+      item.textContent = city.name;
+      cityList.append(item);
+    });
+  };
+
+  const renderPins = (cities) => {
+    const pins = cities
+      .map((city) => ({
+        ...city,
+        point: Array.isArray(city.coordinates) ? projection(city.coordinates) : null,
+      }))
+      .filter((city) => Array.isArray(city.point));
+
+    const pinSelection = pinLayer
+      .selectAll("circle")
+      .data(pins, (city) => city.name)
+      .join("circle")
+      .attr("class", "travel-city-pin")
+      .attr("cx", (city) => city.point[0])
+      .attr("cy", (city) => city.point[1])
+      .attr("r", 4.8);
+
+    pinSelection.selectAll("title").data((city) => [city]).join("title").text((city) => city.name);
+  };
+
+  const getRecordFeature = (record) => {
+    const codeKey = normalizeTravelCode(record.iso3 || record.code);
+    const nameKey = normalizeTravelName(record.name || record.country);
+    return featureByRecordKey.get(codeKey) || featureByRecordKey.get(nameKey);
+  };
+
+  const renderCountryIndex = () => {
+    if (!countryIndex) return;
+    countryIndex.innerHTML = "";
+
+    records.forEach((record) => {
+      const feature = getRecordFeature(record);
+      const button = document.createElement("button");
+      button.type = "button";
+      if (!feature) button.disabled = true;
+
+      const name = document.createElement("span");
+      name.textContent = record.name || record.country || "Country";
+
+      const count = document.createElement("span");
+      const cityCount = getCityEntries(record).length;
+      count.textContent = `${cityCount} ${cityCount === 1 ? "city" : "cities"}`;
+
+      button.append(name, count);
+      if (feature) {
+        button.addEventListener("click", () => focusFeature(feature));
+      }
+      countryIndex.append(button);
+    });
+  };
+
+  const resetMap = () => {
+    countrySelection.classed("is-selected", false);
+    pinLayer.selectAll("*").remove();
+    mapGroup
+      .transition()
+      .duration(duration)
+      .ease(d3Map.easeCubicOut)
+      .attr("transform", "translate(0,0) scale(1)");
+
+    if (title) title.textContent = "World";
+    if (copy) {
+      copy.textContent = records.length
+        ? `${records.length} ${records.length === 1 ? "country" : "countries"} saved.`
+        : "No countries saved yet.";
+    }
+    renderCities([]);
+    renderCountryIndex();
+  };
+
+  const zoomToFeature = (feature) => {
+    const bounds = path.bounds(feature);
+    const dx = bounds[1][0] - bounds[0][0];
+    const dy = bounds[1][1] - bounds[0][1];
+    const x = (bounds[0][0] + bounds[1][0]) / 2;
+    const y = (bounds[0][1] + bounds[1][1]) / 2;
+
+    if (!Number.isFinite(dx) || !Number.isFinite(dy) || dx <= 0 || dy <= 0) return;
+
+    const scale = Math.min(9, Math.max(1.25, 0.72 / Math.max(dx / width, dy / height)));
+    const translateX = width / 2 - scale * x;
+    const translateY = height / 2 - scale * y;
+
+    mapGroup
+      .transition()
+      .duration(duration)
+      .ease(d3Map.easeCubicOut)
+      .attr("transform", `translate(${translateX},${translateY}) scale(${scale})`);
+  };
+
+  function focusFeature(feature) {
+    const record = getRecordForFeature(feature);
+    const countryName = record?.name || record?.country || getFeatureName(feature);
+    const cities = getCityEntries(record);
+
+    countrySelection.classed("is-selected", (item) => item === feature);
+    renderCities(cities);
+    renderPins(cities);
+    zoomToFeature(feature);
+
+    if (title) title.textContent = countryName;
+    if (copy) {
+      copy.textContent = cities.length
+        ? `${cities.length} ${cities.length === 1 ? "city" : "cities"} saved.`
+        : "No saved cities yet.";
+    }
+  }
+
+  const countrySelection = countryLayer
+    .selectAll("path")
+    .data(features)
+    .join("path")
+    .attr("class", (feature) =>
+      getRecordForFeature(feature) ? "travel-country is-visited" : "travel-country"
+    )
+    .attr("d", path)
+    .attr("tabindex", 0)
+    .attr("role", "button")
+    .attr("aria-label", getFeatureName)
+    .on("click", (event, feature) => {
+      event.stopPropagation();
+      focusFeature(feature);
+    })
+    .on("keydown", (event, feature) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      focusFeature(feature);
+    });
+
+  countrySelection.append("title").text(getFeatureName);
+  spherePath.on("click", resetMap);
+  resetButton?.addEventListener("click", resetMap);
+  renderCountryIndex();
+  resetMap();
+};
+
 renderUpdates();
 renderPhotographyGallery();
+renderTravelMap();
 markSchoolEggs();
 
 const revealObserver = new IntersectionObserver(

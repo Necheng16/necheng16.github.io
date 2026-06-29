@@ -55,4 +55,7 @@ window.siteData = {
       minimumSlots: 3,
     },
   ],
+  travel: {
+    countries: [],
+  },
 };
