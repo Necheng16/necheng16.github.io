@@ -137,6 +137,11 @@ window.siteData = {
         cities: ["Indonesia"],
       },
       {
+        iso3: "MYS",
+        name: "Malaysia",
+        cities: ["Malaysia"],
+      },
+      {
         iso3: "AUS",
         name: "Australia",
         cities: ["Melbourne", "Gold Coast", "Sydney"],
